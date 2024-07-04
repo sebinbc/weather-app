@@ -4,12 +4,18 @@ import { fetchWeather } from "./api/fetchWeather";
 const App = () => {
   const [weatherData, setWeatherData] = useState(null);
   const [cityName, setCityName] = useState("");
+  const [error, setError] = useState(null);
 
   const fetchData = async (e) => {
     if (e.key === "Enter") {
-      const data = await fetchWeather(cityName);
-      setWeatherData(data);
-      setCityName("");
+      try {
+        const data = await fetchWeather(cityName);
+        setWeatherData(data);
+        setCityName("");
+        setError(null);
+      } catch (error) {
+        setError(error.message);
+      }
     }
   };
 
@@ -22,13 +28,25 @@ const App = () => {
         onChange={(e) => setCityName(e.target.value)}
         onKeyDown={fetchData}
       />
+      {error && <div style={{ color: "red" }}>{error}</div>}
       {weatherData && (
         <div>
           <h2>
             {weatherData.location.name}, {weatherData.location.region},{" "}
             {weatherData.location.country}
           </h2>
-          <p> {weatherData.current.temp_c} °C</p>
+          <p>
+            Temperature: {weatherData.current.temp_c} °C (
+            {weatherData.current.temp_f} °F )
+          </p>
+          <p>Condition: {weatherData.current.condition.text}</p>
+          <img
+            src={weatherData.current.condition.icon}
+            alt={weatherData.current.condition.text}
+          />
+          <p>Humidity: {weatherData.current.humidity} %</p>
+          <p>Pressure: {weatherData.current.pressure_mb} mb</p>
+          <p>Visibility: {weatherData.current.vis_km} km</p>
         </div>
       )}
     </div>
