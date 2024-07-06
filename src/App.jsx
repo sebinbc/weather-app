@@ -1,56 +1,14 @@
-import React, { useState } from "react";
-import { fetchWeather } from "./api/fetchWeather";
+import React from 'react';
+import WeatherApp from './components/WeatherApp';
+import { UnitProvider } from './context/UnitContext';
+import './App.css'; // Import the CSS file
 
-const App = () => {
-  const [weatherData, setWeatherData] = useState(null);
-  const [cityName, setCityName] = useState("");
-  const [error, setError] = useState(null);
-
-  const fetchData = async (e) => {
-    if (e.key === "Enter") {
-      try {
-        const data = await fetchWeather(cityName);
-        setWeatherData(data);
-        setCityName("");
-        setError(null);
-      } catch (error) {
-        setError(error.message);
-      }
-    }
-  };
-
-  return (
-    <div>
-      <input
-        type="text"
-        placeholder="Enter city name..."
-        value={cityName}
-        onChange={(e) => setCityName(e.target.value)}
-        onKeyDown={fetchData}
-      />
-      {error && <div style={{ color: "red" }}>{error}</div>}
-      {weatherData && (
-        <div>
-          <h2>
-            {weatherData.location.name}, {weatherData.location.region},{" "}
-            {weatherData.location.country}
-          </h2>
-          <p>
-            Temperature: {weatherData.current.temp_c} °C (
-            {weatherData.current.temp_f} °F )
-          </p>
-          <p>Condition: {weatherData.current.condition.text}</p>
-          <img
-            src={weatherData.current.condition.icon}
-            alt={weatherData.current.condition.text}
-          />
-          <p>Humidity: {weatherData.current.humidity} %</p>
-          <p>Pressure: {weatherData.current.pressure_mb} mb</p>
-          <p>Visibility: {weatherData.current.vis_km} km</p>
+const App = () => (
+    <UnitProvider>
+        <div className="container">
+            <WeatherApp />
         </div>
-      )}
-    </div>
-  );
-};
+    </UnitProvider>
+);
 
 export default App;
